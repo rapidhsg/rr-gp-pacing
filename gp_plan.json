@@ -1,0 +1,21 @@
+{
+  "_read_me": "Richie's GM comp plan numbers for the GP Pacing board. Only Joe edits this file. Set each quarter's goals at quarterly planning. When a month's P&L closes (by the 20th), enter its revenue and gross profit under pl_months and the board uses the real P&L numbers for that month instead of the AccuLynx estimate.",
+  "quarters": {
+    "2026-Q4": { "revenue_goal": 2905000, "gp_goal_pct": 0.37 }
+  },
+  "base_salary_annual": 120000,
+  "tiers": [
+    { "name": "94%", "at": 0.94, "rate": 0.01 },
+    { "name": "Goal", "at": 1.00, "rate": 0.015 },
+    { "name": "110%", "at": 1.10, "rate": 0.02 }
+  ],
+  "gates": {
+    "margin_floor_share_of_goal": 0.94,
+    "team_close_rate_min": 0.30
+  },
+  "pl_months": {
+    "2026-10": { "revenue": null, "gross_profit": null },
+    "2026-11": { "revenue": null, "gross_profit": null },
+    "2026-12": { "revenue": null, "gross_profit": null }
+  }
+}
