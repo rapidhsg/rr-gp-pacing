@@ -72,17 +72,27 @@
   .tag { display: inline-block; background: #E3E1DE; color: #555; font-size: 10px; letter-spacing: .06em; padding: 1px 5px; vertical-align: 1px; margin-left: 4px; }
   .est-t { color: #6B6865; }
   table.mini th { font-size: 12px; padding: 8px 10px; } table.mini td { font-size: 13px; padding: 8px 10px; color: #333; } table.mini .sub { display: inline; }
+  .tiers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .tier { border: 1px solid var(--rule); border-top: 6px solid var(--pitch-black); padding: 14px 16px; }
+  .tier.hit { border-top-color: var(--success); background: var(--success-tint); }
+  .tier-head { display: flex; justify-content: space-between; align-items: baseline; }
+  .tname { font-family: var(--display); font-weight: 900; font-size: 26px; text-transform: uppercase; }
+  .tbonus { font-family: var(--display); font-weight: 800; font-size: 16px; color: var(--success-ink); }
+  .ask { font-family: var(--display); font-weight: 800; font-size: 22px; line-height: 1.15; margin: 8px 0 10px; text-transform: uppercase; }
+  .ask b { color: var(--rapid-red); font-weight: 900; }
+  ul.steps { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: 14px; line-height: 1.45; color: #333; }
   ul.todo { margin: 0; padding-left: 20px; display: grid; gap: 8px; font-size: 15px; line-height: 1.5; }
   .src { font-size: 12px; color: var(--steel); line-height: 1.6; }
   footer { background: var(--pitch-black); color: var(--solar-white); border-top: 3px solid var(--flash-yellow); display: flex; align-items: center; gap: 28px; flex-wrap: wrap; padding: 10px 28px max(10px, env(safe-area-inset-bottom)); font-family: var(--display); font-weight: 800; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; }
   footer small { color: #9A9A9A; font-size: 10px; letter-spacing: .1em; margin-right: 8px; }
   footer img { height: 22px; margin-left: auto; display: block; }
+  @media (max-width: 1050px) { .tiers { grid-template-columns: 1fr; } }
   @media (max-width: 1050px) { .stats { grid-template-columns: 1fr 1fr; } .stats > div:nth-child(3) { border-left: 0; padding-left: 0; } .stats > div { padding-top: 10px; padding-bottom: 10px; } }
   @media (max-width: 760px) {
     .brand, footer { padding-left: 16px; padding-right: 16px; gap: 14px; }
     .chips { margin-left: 0; }
     main { padding: 14px 12px; }
-    .stats, .gates { grid-template-columns: 1fr; }
+    .stats, .gates, .tiers { grid-template-columns: 1fr; }
     table.mini th, table.mini td { white-space: normal; }
     .stats > div { border-left: 0; padding: 8px 0; border-top: 1px solid var(--rule); }
     .big { font-size: 36px; }
@@ -130,25 +140,33 @@ function render(d) {
 
   let ticks = d.tiers.map(x => `<div class="tick" style="left:${at(x.gp_target)}"><span>${x.name}<small>${k(x.gp_target)}</small></span></div>`).join("");
 
-  let rows = d.tiers.map(x => x.hit
-    ? `<tr class="hit"><td><span class="num">${x.name}</span><span class="sub">${money(x.bonus)} bonus</span></td><td colspan="4"><span class="num good">Reached</span></td></tr>`
-    : `<tr><td><span class="num">${x.name}</span><span class="sub">${money(x.bonus)} bonus · ${money(x.bonus + d.base_quarter)} total Q pay</span></td>
-         <td><span class="num">${k(x.gp_needed)}</span></td>
-         <td><span class="num">${k(x.install_needed)}</span></td>
-         <td><span class="num">${k(x.per_week)}</span></td>
-         <td><span class="num ${x.beyond_schedule ? "" : "good"}">${x.beyond_schedule ? k(x.beyond_schedule) : "Covered"}</span><span class="sub">${x.beyond_schedule ? "sell and install" : "if the schedule holds"}</span></td></tr>`).join("");
+  const end = d.quarter_end;
+  const schedGP = d.scheduled.value * gm.value;
+  let rows = d.tiers.map(x => {
+    const head = `<div class="tier-head"><span class="tname">${x.name}</span><span class="tbonus">${money(x.bonus)} bonus</span></div>`;
+    if (x.hit) return `<div class="tier hit">${head}<div class="ask good">Reached.</div></div>`;
+    const left = Math.max(0, x.gp_needed - schedGP);
+    const ask = x.beyond_schedule
+      ? `Sell and install <b>${k(x.beyond_schedule)}</b> of new work by ${end}`
+      : `Covered if every scheduled job installs by ${end}`;
+    const steps = x.beyond_schedule
+      ? `<li>We need <b>${k(x.gp_needed)}</b> more gross profit by ${end}.</li>
+         <li>The ${d.scheduled.jobs} jobs already on the install schedule (${k(d.scheduled.value)} of work) bring about <b>${k(schedGP)}</b> of that.</li>
+         <li>That leaves <b>${k(left)}</b> of gross profit. At our ${pct(gm.value)} margin, that takes <b>${k(x.beyond_schedule)}</b> of new jobs, sold and installed by ${end}.</li>
+         <li>That's about <b>${k(x.beyond_schedule / d.weeks_left)}</b> of new work a week for the ${d.weeks_left} weeks left.</li>`
+      : `<li>We need <b>${k(x.gp_needed)}</b> more gross profit by ${end}.</li>
+         <li>The ${d.scheduled.jobs} jobs already on the install schedule (${k(d.scheduled.value)} of work) bring about <b>${k(schedGP)}</b>, which is enough. Every one of them has to get installed by ${end}.</li>`;
+    return `<div class="tier">${head}<div class="ask">${ask}</div><ul class="steps">${steps}</ul></div>`;
+  }).join("");
 
   // Plain directions, built from the numbers.
   const next = d.tiers.find(x => !x.hit);
   const todo = [];
   if (!gc.pass) todo.push(`<b>Close rate is the first fix.</b> The team is at ${pct(gc.value)} and the gate is ${pct(gc.min)}. That is ${gc.sales_short} sales short on today's demos. If the quarter ended today, the bonus would be $0 no matter how much profit came in.`);
   if (!gm.pass) todo.push(`<b>Margin is under the floor.</b> Closed jobs are at ${pct(gm.value)} and the floor is ${pct(gm.min)}. Hold the template pricing and the discount limits.`);
-  if (next) {
-    todo.push(`<b>To reach ${next.name}</b>, ${k(next.install_needed)} more has to be installed by the end of the quarter, about ${k(next.per_week)} a week.`);
-    todo.push(next.beyond_schedule
-      ? `${k(d.scheduled.value)} is already on the install schedule (${d.scheduled.jobs} jobs). That leaves ${k(next.beyond_schedule)} that still has to be sold and installed before the quarter ends. Sold jobs only count once they're installed.`
-      : `What's already on the install schedule (${k(d.scheduled.value)}, ${d.scheduled.jobs} jobs) gets there if every job goes in on time. Protect the schedule.`);
-  }
+  if (next) todo.push(next.beyond_schedule
+      ? `<b>To reach ${next.name}</b> (${money(next.bonus)} bonus), sell and install ${k(next.beyond_schedule)} of new work by ${end}, on top of the ${d.scheduled.jobs} jobs already scheduled. Sold jobs only count once they're installed, so they have to be sold early enough to get on the schedule.`
+      : `<b>To reach ${next.name}</b> (${money(next.bonus)} bonus), get every scheduled job installed by ${end}. Protect the schedule.`);
   todo.push(`Every point of margin matters. At ${pct(gm.value)}, each $100K installed adds ${k(100000 * gm.value)} of gross profit. At ${pct(d.gp_goal_pct)}, it would add ${k(100000 * d.gp_goal_pct)}.`);
 
   const proj = d.projected_gp / d.gp_goal;
@@ -194,11 +212,8 @@ function render(d) {
 
   <section class="card">
     <h2>What it takes to hit each bonus</h2>
-    <div class="wrap"><table>
-      <thead><tr><th>Bonus line</th><th>Gross profit still needed</th><th>Installs needed</th><th>Per week</th><th>Beyond what's scheduled</th></tr></thead>
-      <tbody>${rows}</tbody>
-    </table></div>
-    <div class="note">Gross profit still needed counts actual plus the estimate for open jobs. Installs needed are at today's ${pct(gm.value)} margin. The bonus only pays if both gates pass.${gatesOk ? "" : " Right now one does not."}</div>
+    <div class="note" style="margin:-6px 0 14px">Dollars of work are job value, what the customer pays. Only jobs installed by ${end} count this quarter. The bonus only pays if both gates pass.${gatesOk ? "" : " Right now one does not."}</div>
+    <div class="tiers">${rows}</div>
   </section>
 
   <section class="card">

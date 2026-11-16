@@ -144,7 +144,7 @@ def main():
     out = {
         "updated": pulled.isoformat(timespec="seconds"),
         "quarter": f"Q{q + 1} {today.year}",
-        "day": days_done, "days": days_total, "weeks_left": round(weeks_left, 1),
+        "day": days_done, "days": days_total, "quarter_end": f"{q_end:%b} {q_end.day}", "weeks_left": round(weeks_left, 1),
         "revenue_goal": goals["revenue_goal"], "gp_goal_pct": goals["gp_goal_pct"], "gp_goal": round(gp_goal),
         "gp_to_date": round(gp_to_date), "actual_gp": round(actual_gp), "estimate_gp": round(est_gp),
         "installed": round(float(ca[inst].sum())), "installed_jobs": int(inst.sum()),
