@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-16T17:03:59-05:00",
+  "updated": "2026-11-17T08:04:13-05:00",
   "quarter": "Q4 2026",
   "day": 48,
   "days": 92,
@@ -8,9 +8,9 @@
   "revenue_goal": 2905000,
   "gp_goal_pct": 0.37,
   "gp_goal": 1074850,
-  "gp_to_date": 713555,
-  "actual_gp": 402828,
-  "estimate_gp": 310727,
+  "gp_to_date": 714091,
+  "actual_gp": 403131,
+  "estimate_gp": 310961,
   "installed": 1934044,
   "installed_jobs": 120,
   "closed_jobs": 86,
@@ -23,20 +23,20 @@
       "month": "October",
       "installed": 1267658,
       "closed_jobs": 83,
-      "actual_gp": 393249,
+      "actual_gp": 393537,
       "open_jobs": 10,
       "open_value": 197920,
-      "estimate_gp": 73021,
+      "estimate_gp": 73076,
       "source": "AccuLynx"
     },
     {
       "month": "November",
       "installed": 666385,
       "closed_jobs": 3,
-      "actual_gp": 9579,
+      "actual_gp": 9594,
       "open_jobs": 24,
       "open_value": 644285,
-      "estimate_gp": 237705,
+      "estimate_gp": 237884,
       "source": "AccuLynx"
     }
   ],
@@ -44,7 +44,7 @@
     "value": 731904,
     "jobs": 38
   },
-  "projected_gp": 983586,
+  "projected_gp": 984326,
   "projected_bonus": 0,
   "tiers": [
     {
@@ -53,10 +53,10 @@
       "rate": 0.01,
       "gp_target": 1010359,
       "bonus": 10104,
-      "gp_needed": 296804,
-      "install_needed": 804469,
-      "per_week": 127984,
-      "beyond_schedule": 72565,
+      "gp_needed": 296268,
+      "install_needed": 802411,
+      "per_week": 127656,
+      "beyond_schedule": 70507,
       "hit": false
     },
     {
@@ -65,10 +65,10 @@
       "rate": 0.015,
       "gp_target": 1074850,
       "bonus": 16123,
-      "gp_needed": 361295,
-      "install_needed": 979268,
-      "per_week": 155793,
-      "beyond_schedule": 247364,
+      "gp_needed": 360759,
+      "install_needed": 977078,
+      "per_week": 155444,
+      "beyond_schedule": 245174,
       "hit": false
     },
     {
@@ -77,16 +77,16 @@
       "rate": 0.02,
       "gp_target": 1182335,
       "bonus": 23647,
-      "gp_needed": 468780,
-      "install_needed": 1270599,
-      "per_week": 202141,
-      "beyond_schedule": 538695,
+      "gp_needed": 468244,
+      "install_needed": 1268191,
+      "per_week": 201758,
+      "beyond_schedule": 536287,
       "hit": false
     }
   ],
   "gates": {
     "margin": {
-      "value": 0.3689,
+      "value": 0.3692,
       "min": 0.3478,
       "pass": true
     },
